@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+
+    <button onclick="sellAirF()" style="font-size:25px; background-color:white; color:lightblue; border-radius:25px;">Sell Air Forces</button>
+    <button onclick="sellAirM()" style="font-size:25px; background-color:white; color:lightblue; border-radius:25px;">Sell Air Max</button>
+    <button onclick="sellJords()" style="font-size:25px; background-color:white; color:lightblue; border-radius:25px;">Sell Jordans</button>
+    <button onclick="sellDaybreak()" style="font-size:25px; background-color:white; color:lightblue; border-radius:25px;">Sell Daybreak</button>
+
+    <script>
+	const brokerUrl = "wss://broker.hivemq.com:8884/mqtt"; // Public MQTT broker 
+        const airForceTopic = "shoes/stockdec/airforces"; 
+        const airMaxTopic = "shoes/stockdec/airmax"; 
+        const JordansTopic = "shoes/stockdec/jordans"; 
+        const DaybreakTopic = "shoes/stockdec/daybreak"; 
+	// Connect to the broker 
+	const client = mqtt.connect(brokerUrl);
+ 
+        function sellAirF(){
+	    const message = "AF-";
+            client.publish(airForceTopic, message)
+            console.log('Published: ${message}');
+        }
+        function sellAirM(){
+	    const message = "AM-";
+            client.publish(airMaxTopic, message)
+            console.log('Published: ${message}');
+        }
+        function sellJords(){
+	    const message = "J-";
+            client.publish(JordansTopic, message)
+            console.log('Published: ${message}');
+        }
+        function sellDaybreak(){
+	    const message = "D-";
+            client.publish(DaybreakTopic, message)
+            console.log('Published: ${message}');
+        }
+	   
+    </script>
+</body>
+</html>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<title>Shoe Stock Display</title> 
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script> 
+<style> 
+    body { 
+        background-color: white; 
+	font-family: Helvetica, Arial, sans-serif; 
+	margin: 0; 
+	padding: 0; 
+    } 
+    h2 { 
+	text-align: center; 
+	margin-top: 20px; 
+    } 
+    #status { 
+	font-weight: bold; 
+    } 
+    .dashboard { 
+	display: grid; 
+	grid-template-columns: 1fr 1fr; 
+	gap: 20px; 
+	max-width: 600px; 
+	margin: 20px auto; 
+    } 
+    .cell { 
+      border: 2px solid black; 
+      border-radius: 8px; 
+      padding: 20px; 
+      text-align: center; 
+      font-size: 16px; 
+      min-height: 80px; 
+      box-sizing: border-box; 
+    } 
+  </style> 
+</head> 
+<body> 
+  <h2>Smart Home Dashboard</h2> 
+  <p style="text-align:center;">Status: <span id="status">Disconnected</span></p> 
+  <div class="dashboard"> 
+    <div id="airforces" class="cell">AirForces: N/A</div> 
+    <div id="airmax" class="cell">AirMax: N/A</div> 
+    <div id="jordans" class="cell">Jordans: N/A</div> 
+    <div id="daybreak" class="cell">Daybreak: N/A</div> 
+  </div> 
+ 
+  <script> 
+    // MQTT broker details and topics 
+    const brokerUrl = "wss://broker.hivemq.com:8884/mqtt"; 
+    const airForceTopic = "shoes/stock/airforces"; 
+    const airMaxTopic = "shoes/stock/airmax"; 
+    const JordansTopic = "shoes/stock/jordans"; 
+    const DaybreakTopic = "shoes/stock/daybreak"; 
+ 
+    // Connect to the MQTT broker 
+    const client = mqtt.connect(brokerUrl); 
+ 
+    client.on("connect", () => { 
+      document.getElementById("status").textContent = "Connected"; 
+      console.log("Connected to broker"); 
+      client.subscribe([airForceTopic, airMaxTopic,JordansTopic, DaybreakTopic], (err) => { 
+        if (err) console.error("Subscription error:", err); 
+      }); 
+    }); 
+ 
+    client.on("message", (topic, message) => {
+      console.log("Message Recieved");  
+      let payload; 
+      try { 
+        payload = JSON.parse(message.toString()); 
+      } catch (e) { 
+        console.error("Error parsing JSON:", e); 
+        return; 
+      } 
+ 	
+      if (topic === airForceTopic) { 
+        console.log("Air Force Stock Recieved");  
+        let airF = payload.airforces; 
+        let displayairF = airF; 
+        let bgColor = "white";
+        const airFDiv = document.getElementById("airforces"); 
+        airFDiv.textContent = "Air Forces:" + displayairF; 
+        airFDiv.style.backgroundColor = bgColor; 
+      } 
+      else if (topic === airMaxTopic) { 
+        let airM = payload.airmax; 
+        let displayairM = airM; 
+        let bgColor = "white";
+        const airMDiv = document.getElementById("airmax"); 
+        airMDiv.textContent = "Air Max:" + displayairM; 
+        airMDiv.style.backgroundColor = bgColor; 
+      }
+      else if (topic === JordansTopic) { 
+        let Jords = payload.jordans; 
+        let displayJords = Jords; 
+        let bgColor = "white";
+        const JordsDiv = document.getElementById("jordans"); 
+        JordsDiv.textContent = "Jordans:" + displayJords; 
+        JordsDiv.style.backgroundColor = bgColor; 
+      } 
+      else if (topic === DaybreakTopic) { 
+        let Daybreak = payload.daybreak; 
+        let displayDaybreak = Daybreak; 
+        let bgColor = "white";
+        const DaybreakDiv = document.getElementById("daybreak"); 
+        DaybreakDiv.textContent = "Daybreak:" + displayDaybreak; 
+        DaybreakDiv.style.backgroundColor = bgColor; 
+      } 
+    }); 
+
+    client.on("error", (err) => { 
+        console.error("MQTT Error:", err); 
+    }); 
+</script> 
+</body> 
+</html>
